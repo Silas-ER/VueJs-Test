@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Todo List</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+        new Vue ({
+            el: '#app',
+            template: `
+                <div class="container">
+                    <h1>Comentários</h1>
+                    <hr />
+                        <div class="form-todo form-group">
+                            <p>
+                                <input type="text" placeholder="nome" name="author" class="form-control" v-model="name" />
+                            </p>
+                            <p>
+                                <textarea name="message" placeholder="Comentário" id="" class="form-control" v-model="message" ></textarea>
+                            </p>
+                            <button v-on:click="addComment" type="submit" class="btn btn-primary">Comentar</button>
+                        </div>
+                        <div class="list-group"> 
+                            <div class="list-group-item" v-for="(comment, index) in allComments"> <!-- iterando sobre os comentários -->
+                                <span class="comment__author">Autor: <strong>{{ comment.name }}</strong></span> <!-- bind parecida com jinja 2 -->
+                                <p>
+                                    mensagem: <strong>{{ comment.message }}</strong>
+                                </p>
+                                <div>
+                                    <a href="#" title="Excluir" v-on:click.prevent="removeComment(index)">Excluir</a> <!-- prevent para não recarregar a página -->
+                                </div>
+                            </div>
+                        </div>
+                    <hr />
+                </div>
+            `,
+
+            // Lista de comentários
+            data() {
+                return {
+                    comments: [
+                        {
+                            name: 'Silas',
+                            message: 'Ótimo Estudo!'
+                        }
+                    ],
+                    name: '',
+                    message: ''                
+                }
+            },
+
+            // Funções para manipulação da lista de comentários
+            methods: {
+                addComment() {
+                    if (this.message === '') {         
+                        alert('Por favor, preencha o campo de mensagem!'); 
+                        return;
+                    }
+
+                    this.comments.push({
+                        name: this.name,
+                        message: this.message
+                    });
+                    // esvaziando os campos (true date binding reverse)
+                    this.name = '';
+                    this.message = '';
+                },
+
+                removeComment(index) {
+                    this.comments.splice(index, 1); // removendo o comentário, o 1 é apenas para remover 1 item
+                }
+            },
+
+            // o que eu quero mostrar de informação
+            computed: {
+                allComments() {
+                    return this.comments.map(comment => ({
+                        ...comment,
+                        name: comment.name.trim() === '' ? 'Anônimo' : comment.name
+                    }))
+                }
+            },
+
+            // monitorando as mudanças
+            watch: {
+                comments(val) {
+                    console.log('Comentários atualizados!', val);
+                }
+            }
+        })
+    </script>
+</body>
+</html>
